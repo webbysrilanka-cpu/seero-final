@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
@@ -49,7 +50,7 @@ export default function Scene3D({ className }: { className?: string }) {
   }, []);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={cn("h-full w-full max-w-full", className)}>
       {show ? (
         <HeroScene />
       ) : (

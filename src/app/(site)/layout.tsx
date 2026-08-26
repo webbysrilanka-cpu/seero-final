@@ -30,7 +30,7 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="noise relative min-h-screen bg-void">
+    <div className="site-shell noise relative min-h-screen bg-void">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

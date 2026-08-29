@@ -11,11 +11,9 @@ export const site = {
   tagline: "Websites that win local customers.",
   description:
     "Seero builds fast, modern websites for Sri Lankan businesses and individuals — designed to be found on Google and to turn visitors into customers.",
-  url:
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "https://seero.lk"),
+  // The real domain. Everything canonical — sitemap, share previews,
+  // structured data — is built from this.
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://seero.lk",
 
   // ── CONTACT ───────────────────────────────────────────────
   phone: "+94 77 262 0308",

@@ -174,13 +174,13 @@ export default function ProjectEditor({ project }: { project?: Project }) {
 
           <div>
             <label className="mb-2 block text-xs uppercase tracking-widest text-ink-mute">
-              Outcome / result
+              Outcome / result (shown on the card)
             </label>
             <input
               name="outcome"
               defaultValue={project?.outcome ?? ""}
               className={input}
-              placeholder="Menu-first layout with a persistent booking bar."
+              placeholder="What changed for them — orders, calls, bookings, time saved."
             />
           </div>
 
@@ -193,7 +193,7 @@ export default function ProjectEditor({ project }: { project?: Project }) {
                 name="client_name"
                 defaultValue={project?.client_name ?? ""}
                 className={input}
-                placeholder="Concept project"
+                placeholder="The business you built it for"
               />
             </div>
             <div>
@@ -299,8 +299,10 @@ export default function ProjectEditor({ project }: { project?: Project }) {
           <Toggle
             name="is_concept"
             label="Concept project"
-            hint="Adds a 'Concept' label so visitors know it is not client work."
-            defaultChecked={project?.is_concept ?? true}
+            hint="Only tick this for our own design work. It adds a 'Concept' label to the card and puts a disclaimer on the page."
+            // Off by default: new entries are real client work now. Leave this
+            // on by default and every client project quietly ships mislabelled.
+            defaultChecked={project?.is_concept ?? false}
           />
           <Toggle
             name="featured"

@@ -14,7 +14,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Our Work",
   description:
-    "Concept website builds for Sri Lankan restaurants, clinics, tour operators, workshops and studios — the business types Seero designs for.",
+    "Live websites Seero has built for Sri Lankan businesses — restaurants, clinics, shops and studios. Every project links to the real site.",
 };
 
 export default async function PortfolioPage() {
@@ -24,13 +24,13 @@ export default async function PortfolioPage() {
     <>
       <PageHero
         eyebrow="Our work"
-        title="Concept builds, shown"
-        highlight="honestly"
-        description="Seero is a young studio. Rather than pad a portfolio with other people's screenshots, we designed complete concepts for the business types we build for — so you can judge the work, not the logos."
+        title="Sites that are"
+        highlight="live and working"
+        description="Real businesses, real domains, real customers using them every day. Open any of them on your phone — that is where nearly everyone will see yours too."
         breadcrumb={[{ href: "/portfolio", label: "Work" }]}
       >
         <Button href="/contact" size="lg">
-          Be our next real project
+          Start your project
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Button>
       </PageHero>
@@ -60,7 +60,7 @@ export default async function PortfolioPage() {
 
       <CTABand
         title="Your business, built properly."
-        description="Every concept above started with a conversation about what that business needed to sell. Yours would start the same way."
+        description="Every site above started with a conversation about what that business needed to sell. Yours would start the same way."
       />
     </>
   );

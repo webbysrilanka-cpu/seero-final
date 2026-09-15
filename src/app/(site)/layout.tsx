@@ -30,10 +30,10 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="site-shell noise relative min-h-screen bg-void">
+    <div className="noise relative min-h-screen bg-void">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\u003c").replace(/>/g, "\u003e").replace(/&/g, "\u0026") }}
       />
       <SmoothScroll />
       <ScrollProgress />

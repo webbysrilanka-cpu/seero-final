@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { assertAdmin } from "@/lib/admin-guard";
 import { slugify } from "@/lib/utils";
 
 export interface ActionState {
@@ -69,8 +70,9 @@ export async function updateLead(formData: FormData) {
   if (typeof admin_notes === "string") patch.admin_notes = admin_notes;
   if (!id || Object.keys(patch).length === 0) return;
 
-  const supabase = await createClient();
-  await supabase.from("inquiries").update(patch).eq("id", id);
+  const supabase = await assertAdmin();
+  const { error } = await supabase.from("inquiries").update(patch).eq("id", id);
+  if (error) throw new Error(`Could not update the lead: ${error.message}`);
   revalidatePath("/admin/leads");
   revalidatePath("/admin");
 }
@@ -97,7 +99,7 @@ export async function savePost(
     return { ok: false, message: "The post needs some content." };
 
   const slug = slugify(rawSlug || title);
-  const supabase = await createClient();
+  const supabase = await assertAdmin();
 
   const payload: Record<string, unknown> = {
     title,
@@ -145,8 +147,9 @@ export async function savePost(
 export async function deletePost(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   if (!id) return;
-  const supabase = await createClient();
-  await supabase.from("posts").delete().eq("id", id);
+  const supabase = await assertAdmin();
+  const { error } = await supabase.from("posts").delete().eq("id", id);
+  if (error) throw new Error(`Could not delete: ${error.message}`);
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
 }
@@ -181,7 +184,7 @@ export async function saveProject(
   if (!category) return { ok: false, message: "Add a category." };
 
   const slug = slugify(rawSlug || title);
-  const supabase = await createClient();
+  const supabase = await assertAdmin();
 
   const payload = {
     title,
@@ -224,8 +227,75 @@ export async function saveProject(
 export async function deleteProject(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   if (!id) return;
-  const supabase = await createClient();
-  await supabase.from("projects").delete().eq("id", id);
+  const supabase = await assertAdmin();
+  const { error } = await supabase.from("projects").delete().eq("id", id);
+  if (error) throw new Error(`Could not delete: ${error.message}`);
   revalidatePath("/admin/portfolio");
   revalidatePath("/portfolio");
+}
+
+/* ── Services ──────────────────────────────────────────── */
+
+export async function saveService(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const id = String(formData.get("id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const rawSlug = String(formData.get("slug") ?? "").trim();
+  const short_description = String(formData.get("short_description") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const icon = String(formData.get("icon") ?? "sparkles");
+  const sort_order = Number(formData.get("sort_order")) || 0;
+  const is_active = formData.get("is_active") === "on";
+
+  if (name.length < 2) return { ok: false, message: "Give the service a name." };
+  if (short_description.length < 5)
+    return {
+      ok: false,
+      message: "Add a short description — it's the line shown on the cards.",
+    };
+
+  const slug = slugify(rawSlug || name);
+  const supabase = await assertAdmin();
+
+  const payload = {
+    name,
+    slug,
+    short_description,
+    description,
+    icon,
+    sort_order,
+    is_active,
+  };
+
+  const { error } = id
+    ? await supabase.from("services").update(payload).eq("id", id)
+    : await supabase.from("services").insert(payload);
+
+  if (error) {
+    return {
+      ok: false,
+      message:
+        error.code === "23505"
+          ? "Another service already uses that URL slug."
+          : `Could not save: ${error.message}`,
+    };
+  }
+
+  revalidatePath("/admin/services");
+  revalidatePath("/services");
+  revalidatePath("/");
+  redirect("/admin/services?saved=1");
+}
+
+export async function deleteService(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  const supabase = await assertAdmin();
+  const { error } = await supabase.from("services").delete().eq("id", id);
+  if (error) throw new Error(`Could not delete: ${error.message}`);
+  revalidatePath("/admin/services");
+  revalidatePath("/services");
+  revalidatePath("/");
 }
